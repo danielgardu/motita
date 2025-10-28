@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Cannábico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilos base para productos */
+        .product-card.sold-out .product-content {
+            opacity: 0.6;
+            filter: grayscale(70%);
+        }
+        .product-card.sold-out .sold-out-overlay {
+            display: flex;
+        }
+        /* Estilos para el menú Liquid Glass */
+        #filters {
+            position: relative;
+            display: inline-flex;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            touch-action: none; /* Previene scroll durante touch en la barra */
+        }
+        #filters.dragging-mode {
+            overflow: visible;
+        }
+        .filter-btn {
+            position: relative;
+            z-index: 2;
+            padding: 0.125rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #4b5563; /* gray-600 para mejor legibilidad */
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .filter-btn.active {
+            color: #111827; /* gray-900, más oscuro para alto contraste */
+        }
+        /* Pill indicador con efecto Liquid Glass - Ajustado para mejor legibilidad */
+        #filter-pill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8); /* Fondo más claro y opaco para mejor visibilidad del texto */
+            backdrop-filter: blur(10px) saturate(150%);
+            border-radius: 9999px;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5), 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
+            z-index: 1;
+            transform-origin: center center;
+        }
+        /* Efecto al arrastrar: fluido y dinámico con reflexión mejorada */
+        #filter-pill.dragging {
+            transform: scale(1.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+        }
+        /* Aproximación a refracción/reflexión: pseudo-elemento con gradiente */
+        #filter-pill::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            opacity: 0.5;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #filter-pill.dragging::before {
+            opacity: 0.8; /* Aumenta la reflexión mientras se arrastra */
+            background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 60%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div class="container mx-auto max-w-2xl p-4 sm:p-6">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold tracking-tight text-gray-900">Nuestro Menú</h1>
+            <p class="mt-2 text-lg text-gray-600">Calidad que puedes sentir.</p>
+        </header>
+        <div class="flex justify-center mb-8 sticky top-4 z-10">
+            <div id="filters" class="py-0 px-1">
+                <div id="filter-pill"></div>
+                <button class="filter-btn active" data-filter="all"><img src="" class="h-16 w-16 mb-0.5 invisible" alt=""><span>Todo</span></button>
+                <button class="filter-btn" data-filter="flor"><img src="https://i.ibb.co/BHN9qWnM/Proyecto-nuevo-2.png" class="h-16 w-16 mb-0.5" alt="Flores"><span>Flores</span></button>
+                <button class="filter-btn" data-filter="joint"><img src="https://i.ibb.co/Rppdnxjd/preroll.png" class="h-16 w-16 mb-0.5" alt="Pre-Roll"><span>Pre-Roll</span></button>
+                <button class="filter-btn" data-filter="pen"><img src="https://i.ibb.co/B5YBDpK4/vape.png" class="h-16 w-16 mb-0.5" alt="Pens"><span>Pens</span></button>
+            </div>
+        </div>
+        <!-- Grid de Productos -->
+        <div id="product-grid" class="grid grid-cols-1 gap-6">
+            <!-- Productos existentes... -->
+            <!-- INICIO: Producto 1 (Joint) -->
+            <div class="product-card" data-category="joint">
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
+                    <div class="product-content p-5">
+                        <div class="flex items-start">
+                            <div class="text-5xl mr-5">🌿</div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-xl font-bold text-gray-900">Blue Dream Pre-Roll</h3>
+                                    <span class="text-lg font-semibold text-gray-800">$12</span>
+                                </div>
+                                <div class="flex items-center space-x-3 text-sm mt-1">
+                                    <span class="font-semibold px-2 py-1 bg-purple-100 text-purple-800 rounded-full">Híbrida</span>
+                                    <span>THC: 22%</span>
+                                </div>
+                                <p class="text-gray-600 mt-3">Efectos: Eufórico, creativo, energizante. Ideal para el día.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sold-out-overlay hidden absolute inset-0 items-center justify-center bg-black/20">
+                        <span class="text-xl font-bold text-white bg-red-600 px-4 py-2 rounded-lg transform -rotate-12 shadow-lg">AGOTADO</span>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN: Producto 1 -->
+            <!-- INICIO: Producto 2 (Flor) - AGOTADO -->
+            <div class="product-card sold-out" data-category="flor">
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
+                    <div class="product-content p-5">
+                        <div class="flex items-start">
+                            <div class="text-5xl mr-5">🌺</div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-xl font-bold text-gray-900">OG Kush (1g)</h3>
+                                    <span class="text-lg font-semibold text-gray-800">$15</span>
+                                </div>
+                                <div class="flex items-center space-x-3 text-sm mt-1">
+                                    <span class="font-semibold px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full">Índica</span>
+                                    <span>THC: 24%</span>
+                                </div>
+                                <p class="text-gray-600 mt-3">Efectos: Relajante, feliz, somnoliento. Perfecto para la noche.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sold-out-overlay hidden absolute inset-0 items-center justify-center bg-black/20">
+                        <span class="text-xl font-bold text-white bg-red-600 px-4 py-2 rounded-lg transform -rotate-12 shadow-lg">AGOTADO</span>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN: Producto 2 -->
+            <!-- INICIO: Producto 3 (Pen) -->
+            <div class="product-card" data-category="pen">
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
+                    <div class="product-content p-5">
+                        <div class="flex items-start">
+                            <div class="text-5xl mr-5">💨</div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-xl font-bold text-gray-900">Vape Pen - Pineapple Express</h3>
+                                    <span class="text-lg font-semibold text-gray-800">$45</span>
+                                </div>
+                                <div class="flex items-center space-x-3 text-sm mt-1">
+                                    <span class="font-semibold px-2 py-1 bg-amber-100 text-amber-800 rounded-full">Sativa</span>
+                                    <span>THC: 85%</span>
+                                </div>
+                                <p class="text-gray-600 mt-3">Efectos: Energético, enfocado, inspirado. Sabor tropical.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sold-out-overlay hidden absolute inset-0 items-center justify-center bg-black/20">
+                        <span class="text-xl font-bold text-white bg-red-600 px-4 py-2 rounded-lg transform -rotate-12 shadow-lg">AGOTADO</span>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN: Producto 3 -->
+            <!-- INICIO: Producto 4 (Flor) -->
+            <div class="product-card" data-category="flor">
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
+                    <div class="product-content p-5">
+                        <div class="flex items-start">
+                            <div class="text-5xl mr-5">🌺</div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-xl font-bold text-gray-900">Sour Diesel (1g)</h3>
+                                    <span class="text-lg font-semibold text-gray-800">$16</span>
+                                </div>
+                                <div class="flex items-center space-x-3 text-sm mt-1">
+                                    <span class="font-semibold px-2 py-1 bg-amber-100 text-amber-800 rounded-full">Sativa</span>
+                                    <span>THC: 25%</span>
+                                </div>
+                                <p class="text-gray-600 mt-3">Efectos: Cerebral, rápido, estimulante. Olor penetrante a diesel.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sold-out-overlay hidden absolute inset-0 items-center justify-center bg-black/20">
+                        <span class="text-xl font-bold text-white bg-red-600 px-4 py-2 rounded-lg transform -rotate-12 shadow-lg">AGOTADO</span>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN: Producto 4 -->
+            <!-- INICIO: Producto 5 (Joint) -->
+            <div class="product-card" data-category="joint">
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
+                    <div class="product-content p-5">
+                        <div class="flex items-start">
+                            <div class="text-5xl mr-5">🌿</div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-xl font-bold text-gray-900">Granddaddy Purple Pre-Roll</h3>
+                                    <span class="text-lg font-semibold text-gray-800">$13</span>
+                                </div>
+                                <div class="flex items-center space-x-3 text-sm mt-1">
+                                    <span class="font-semibold px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full">Índica</span>
+                                    <span>THC: 21%</span>
+                                </div>
+                                <p class="text-gray-600 mt-3">Efectos: Relajación corporal profunda, calma mental.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sold-out-overlay hidden absolute inset-0 items-center justify-center bg-black/20">
+                        <span class="text-xl font-bold text-white bg-red-600 px-4 py-2 rounded-lg transform -rotate-12 shadow-lg">AGOTADO</span>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN: Producto 5 -->
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filtersContainer = document.getElementById('filters');
+            const pill = document.getElementById('filter-pill');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const productCards = document.querySelectorAll('.product-card');
+
+            let activeButton = document.querySelector('.filter-btn.active');
+            let isDragging = false;
+            let startX, currentX;
+
+            // Función para actualizar la posición y ancho de la pill
+            const updatePill = (button, animate = true) => {
+                if (!animate) {
+                    pill.style.transition = 'none';
+                }
+                pill.style.width = `${button.offsetWidth}px`;
+                pill.style.left = `${button.offsetLeft}px`;
+                if (!animate) {
+                    setTimeout(() => {
+                        pill.style.transition = 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease';
+                    }, 0);
+                }
+            };
+
+            // Inicializar pill en el botón activo
+            updatePill(activeButton, false);
+
+            // Manejar clics en botones
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    activeButton = button;
+                    updatePill(button);
+                    applyFilter(button.getAttribute('data-filter'));
+                });
+            });
+
+            // Función para aplicar filtro
+            const applyFilter = (filter) => {
+                productCards.forEach(card => {
+                    const category = card.getAttribute('data-category');
+                    card.style.display = (filter === 'all' || filter === category) ? 'block' : 'none';
+                });
+            };
+
+            // Manejar inicio de drag
+            const startDrag = (e) => {
+                const clientX = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX);
+                const rect = filtersContainer.getBoundingClientRect();
+                const clickX = clientX - rect.left;
+                const pillLeft = parseFloat(pill.style.left || 0);
+                const pillWidth = pill.offsetWidth;
+
+                if (clickX >= pillLeft && clickX <= pillLeft + pillWidth) {
+                    initiateDrag(clientX);
+                    e.preventDefault();
+                }
+            };
+
+            // Función para iniciar el drag inmediatamente
+            const initiateDrag = (clientX) => {
+                isDragging = true;
+                filtersContainer.classList.add('dragging-mode');
+                pill.classList.add('dragging');
+                pill.style.transition = 'transform 0.2s ease'; // Transición solo para transform (scale)
+                startX = clientX - parseFloat(pill.style.left || 0);
+                document.addEventListener('mousemove', onDrag);
+                document.addEventListener('touchmove', onDrag, { passive: false });
+                document.addEventListener('mouseup', endDrag);
+                document.addEventListener('touchend', endDrag);
+            };
+
+            // Manejar movimiento
+            const onDrag = (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const clientX = (e.type === 'touchmove' ? e.touches[0].clientX : e.clientX);
+                currentX = clientX - startX;
+                const minLeft = 0;
+                const maxLeft = filtersContainer.offsetWidth - pill.offsetWidth;
+                pill.style.left = `${Math.max(minLeft, Math.min(currentX, maxLeft))}px`;
+            };
+
+            // Manejar fin de drag
+            const endDrag = (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                filtersContainer.classList.remove('dragging-mode');
+                pill.classList.remove('dragging');
+                pill.style.transition = 'left 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), width 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), transform 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55)'; // Transición con rebote para todo
+                document.removeEventListener('mousemove', onDrag);
+                document.removeEventListener('touchmove', onDrag);
+                document.removeEventListener('mouseup', endDrag);
+                document.removeEventListener('touchend', endDrag);
+
+                // Encontrar el botón en cuya área cae el centro de la pill
+                let targetButton = null;
+                const pillCenter = parseFloat(pill.style.left) + pill.offsetWidth / 2;
+                filterButtons.forEach(button => {
+                    if (pillCenter >= button.offsetLeft && pillCenter < button.offsetLeft + button.offsetWidth) {
+                        targetButton = button;
+                    }
+                });
+
+                // Actualizar al botón target con animación de rebote
+                if (targetButton) {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    targetButton.classList.add('active');
+                    activeButton = targetButton;
+                    updatePill(targetButton, true);
+                    applyFilter(targetButton.getAttribute('data-filter'));
+                } else {
+                    // Si no se encuentra, snap back
+                    updatePill(activeButton, true);
+                }
+
+                // Restaurar transición original después de la animación
+                setTimeout(() => {
+                    pill.style.transition = 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease';
+                }, 300);
+            };
+
+            // Habilitar drag en el contenedor
+            filtersContainer.addEventListener('mousedown', startDrag);
+            filtersContainer.addEventListener('touchstart', startDrag, { passive: false });
+        });
+    </script>
+</body>
+</html>
