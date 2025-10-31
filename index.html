@@ -91,12 +91,80 @@
             opacity: 0.8; /* Aumenta la reflexión mientras se arrastra */
             background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 60%);
         }
+
+        /* Estilos para el mini menú de cantidad */
+        #quantity-selector {
+            position: relative;
+            display: inline-flex;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            touch-action: none;
+        }
+        #quantity-selector.dragging-mode {
+            overflow: visible;
+        }
+        .quantity-btn {
+            position: relative;
+            z-index: 2;
+            padding: 0.125rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #4b5563;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quantity-btn.active {
+            color: #ffffff;
+        }
+        #quantity-pill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.8);
+            backdrop-filter: blur(10px) saturate(150%);
+            border-radius: 9999px;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5), 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
+            z-index: 1;
+            transform-origin: center center;
+        }
+        #quantity-pill.dragging {
+            transform: scale(1.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+        }
+        #quantity-pill::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            opacity: 0.5;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #quantity-pill.dragging::before {
+            opacity: 0.8;
+            background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 60%);
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
     <div class="container mx-auto max-w-2xl p-4 sm:p-6">
         <header class="text-center mb-8">
-            <img src="https://i.ibb.co/pv79C1Ys/motaa.png" alt="motaa" class="mx-auto h-[7.2rem]">
+            <img src="https://i.ibb.co/7JChDVPG/logov3.png" alt="logov3" class="mx-auto h-[7.2rem]">
         </header>
         <div class="flex justify-center mb-8 sticky top-4 z-10">
             <div id="filters" class="py-0 px-1">
@@ -109,45 +177,19 @@
         </div>
         <!-- Grid de Productos -->
         <div id="product-grid" class="grid grid-cols-1 gap-6">
-            <!-- Productos existentes... -->
-            <!-- INICIO: Producto 1 (Joint) -->
-            <div class="product-card" data-category="joint">
+            <!-- Producto OG Kush (Flor) -->
+            <div class="product-card" data-category="flor">
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
                     <div class="product-content p-5">
                         <div class="flex items-start">
-                            <div class="text-5xl mr-5">🌿</div>
-                            <div class="flex-1">
-                                <div class="flex justify-between items-center">
-                                    <h3 class="text-xl font-bold text-gray-900">Blue Dream Pre-Roll</h3>
-                                    <span class="text-lg font-semibold text-gray-800">$12</span>
-                                </div>
-                                <div class="flex items-center space-x-3 text-sm mt-1">
-                                    <span class="font-semibold px-2 py-1 bg-purple-100 text-purple-800 rounded-full">Híbrida</span>
-                                    <span>THC: 22%</span>
-                                </div>
-                                <p class="text-gray-600 mt-3">Efectos: Eufórico, creativo, energizante. Ideal para el día.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="sold-out-overlay hidden absolute inset-0 items-center justify-center bg-black/20">
-                        <span class="text-xl font-bold text-white bg-red-600 px-4 py-2 rounded-lg transform -rotate-12 shadow-lg">AGOTADO</span>
-                    </div>
-                </div>
-            </div>
-            <!-- FIN: Producto 1 -->
-            <!-- INICIO: Producto 2 (Flor) - AGOTADO -->
-            <div class="product-card sold-out" data-category="flor">
-                <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
-                    <div class="product-content p-5">
-                        <div class="flex items-start">
-                            <div class="text-5xl mr-5">🌺</div>
+                            <img src="https://i.ibb.co/pB84Mqrp/bud1.png" alt="bud1" class="h-24 w-24 mr-5">
                             <div class="flex-1">
                                 <div class="flex justify-between items-center">
                                     <h3 class="text-xl font-bold text-gray-900">OG Kush (1g)</h3>
                                     <span class="text-lg font-semibold text-gray-800">$15</span>
                                 </div>
                                 <div class="flex items-center space-x-3 text-sm mt-1">
-                                    <span class="font-semibold px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full">Índica</span>
+                                    <span class="font-semibold px-2 py-1 bg-purple-100 text-purple-800 rounded-full">Híbrida</span>
                                     <span>THC: 24%</span>
                                 </div>
                                 <p class="text-gray-600 mt-3">Efectos: Relajante, feliz, somnoliento. Perfecto para la noche.</p>
@@ -159,70 +201,26 @@
                     </div>
                 </div>
             </div>
-            <!-- FIN: Producto 2 -->
-            <!-- INICIO: Producto 3 (Pen) -->
-            <div class="product-card" data-category="pen">
-                <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
-                    <div class="product-content p-5">
-                        <div class="flex items-start">
-                            <div class="text-5xl mr-5">💨</div>
-                            <div class="flex-1">
-                                <div class="flex justify-between items-center">
-                                    <h3 class="text-xl font-bold text-gray-900">Vape Pen - Pineapple Express</h3>
-                                    <span class="text-lg font-semibold text-gray-800">$45</span>
-                                </div>
-                                <div class="flex items-center space-x-3 text-sm mt-1">
-                                    <span class="font-semibold px-2 py-1 bg-amber-100 text-amber-800 rounded-full">Sativa</span>
-                                    <span>THC: 85%</span>
-                                </div>
-                                <p class="text-gray-600 mt-3">Efectos: Energético, enfocado, inspirado. Sabor tropical.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="sold-out-overlay hidden absolute inset-0 items-center justify-center bg-black/20">
-                        <span class="text-xl font-bold text-white bg-red-600 px-4 py-2 rounded-lg transform -rotate-12 shadow-lg">AGOTADO</span>
-                    </div>
-                </div>
-            </div>
-            <!-- FIN: Producto 3 -->
-            <!-- INICIO: Producto 4 (Flor) -->
-            <div class="product-card" data-category="flor">
-                <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
-                    <div class="product-content p-5">
-                        <div class="flex items-start">
-                            <div class="text-5xl mr-5">🌺</div>
-                            <div class="flex-1">
-                                <div class="flex justify-between items-center">
-                                    <h3 class="text-xl font-bold text-gray-900">Sour Diesel (1g)</h3>
-                                    <span class="text-lg font-semibold text-gray-800">$16</span>
-                                </div>
-                                <div class="flex items-center space-x-3 text-sm mt-1">
-                                    <span class="font-semibold px-2 py-1 bg-amber-100 text-amber-800 rounded-full">Sativa</span>
-                                    <span>THC: 25%</span>
-                                </div>
-                                <p class="text-gray-600 mt-3">Efectos: Cerebral, rápido, estimulante. Olor penetrante a diesel.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="sold-out-overlay hidden absolute inset-0 items-center justify-center bg-black/20">
-                        <span class="text-xl font-bold text-white bg-red-600 px-4 py-2 rounded-lg transform -rotate-12 shadow-lg">AGOTADO</span>
-                    </div>
-                </div>
-            </div>
-            <!-- FIN: Producto 4 -->
-            <!-- INICIO: Producto 5 (Joint) -->
+            <!-- Producto Granddaddy Preroll (Joint) -->
             <div class="product-card" data-category="joint">
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
                     <div class="product-content p-5">
                         <div class="flex items-start">
-                            <div class="text-5xl mr-5">🌿</div>
+                            <img id="preroll-image" src="https://i.ibb.co/xtH7W17m/joint-png.png" alt="joint-png" class="h-24 w-24 mr-5">
                             <div class="flex-1">
                                 <div class="flex justify-between items-center">
-                                    <h3 class="text-xl font-bold text-gray-900">Granddaddy Purple Pre-Roll</h3>
-                                    <span class="text-lg font-semibold text-gray-800">$13</span>
+                                    <h3 class="text-xl font-bold text-gray-900">Granddaddy Preroll</h3>
+                                    <div id="quantity-selector" class="py-0 px-1 ml-4 mr-2">
+                                        <div id="quantity-pill"></div>
+                                        <button class="quantity-btn active" data-quantity="1"><span>1</span></button>
+                                        <button class="quantity-btn" data-quantity="2"><span>2</span></button>
+                                        <button class="quantity-btn" data-quantity="3"><span>3</span></button>
+                                        <button class="quantity-btn" data-quantity="5"><span>5</span></button>
+                                    </div>
+                                    <span id="pre-roll-price" class="text-lg font-semibold text-gray-800">$150</span>
                                 </div>
                                 <div class="flex items-center space-x-3 text-sm mt-1">
-                                    <span class="font-semibold px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full">Índica</span>
+                                    <span class="font-semibold px-2 py-1 bg-purple-100 text-purple-800 rounded-full">Híbrida</span>
                                     <span>THC: 21%</span>
                                 </div>
                                 <p class="text-gray-600 mt-3">Efectos: Relajación corporal profunda, calma mental.</p>
@@ -234,20 +232,18 @@
                     </div>
                 </div>
             </div>
-            <!-- FIN: Producto 5 -->
         </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Script para el menú de filtros
             const filtersContainer = document.getElementById('filters');
             const pill = document.getElementById('filter-pill');
             const filterButtons = document.querySelectorAll('.filter-btn');
             const productCards = document.querySelectorAll('.product-card');
-
             let activeButton = document.querySelector('.filter-btn.active');
             let isDragging = false;
             let startX, currentX;
-
             // Función para actualizar la posición y ancho de la pill
             const updatePill = (button, animate = true) => {
                 if (!animate) {
@@ -261,10 +257,8 @@
                     }, 0);
                 }
             };
-
             // Inicializar pill en el botón activo
             updatePill(activeButton, false);
-
             // Manejar clics en botones
             filterButtons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -275,7 +269,6 @@
                     applyFilter(button.getAttribute('data-filter'));
                 });
             });
-
             // Función para aplicar filtro
             const applyFilter = (filter) => {
                 productCards.forEach(card => {
@@ -283,7 +276,6 @@
                     card.style.display = (filter === 'all' || filter === category) ? 'block' : 'none';
                 });
             };
-
             // Manejar inicio de drag
             const startDrag = (e) => {
                 const clientX = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX);
@@ -291,13 +283,11 @@
                 const clickX = clientX - rect.left;
                 const pillLeft = parseFloat(pill.style.left || 0);
                 const pillWidth = pill.offsetWidth;
-
                 if (clickX >= pillLeft && clickX <= pillLeft + pillWidth) {
                     initiateDrag(clientX);
                     e.preventDefault();
                 }
             };
-
             // Función para iniciar el drag inmediatamente
             const initiateDrag = (clientX) => {
                 isDragging = true;
@@ -310,7 +300,6 @@
                 document.addEventListener('mouseup', endDrag);
                 document.addEventListener('touchend', endDrag);
             };
-
             // Manejar movimiento
             const onDrag = (e) => {
                 if (!isDragging) return;
@@ -321,7 +310,6 @@
                 const maxLeft = filtersContainer.offsetWidth - pill.offsetWidth;
                 pill.style.left = `${Math.max(minLeft, Math.min(currentX, maxLeft))}px`;
             };
-
             // Manejar fin de drag
             const endDrag = (e) => {
                 if (!isDragging) return;
@@ -333,7 +321,6 @@
                 document.removeEventListener('touchmove', onDrag);
                 document.removeEventListener('mouseup', endDrag);
                 document.removeEventListener('touchend', endDrag);
-
                 // Encontrar el botón en cuya área cae el centro de la pill
                 let targetButton = null;
                 const pillCenter = parseFloat(pill.style.left) + pill.offsetWidth / 2;
@@ -342,7 +329,6 @@
                         targetButton = button;
                     }
                 });
-
                 // Actualizar al botón target con animación de rebote
                 if (targetButton) {
                     filterButtons.forEach(btn => btn.classList.remove('active'));
@@ -354,16 +340,148 @@
                     // Si no se encuentra, snap back
                     updatePill(activeButton, true);
                 }
-
                 // Restaurar transición original después de la animación
                 setTimeout(() => {
                     pill.style.transition = 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease';
                 }, 300);
             };
-
             // Habilitar drag en el contenedor
             filtersContainer.addEventListener('mousedown', startDrag);
             filtersContainer.addEventListener('touchstart', startDrag, { passive: false });
+
+            // Script para el mini menú de cantidad
+            const quantityContainer = document.getElementById('quantity-selector');
+            const qPill = document.getElementById('quantity-pill');
+            const quantityButtons = document.querySelectorAll('.quantity-btn');
+            let activeQButton = document.querySelector('.quantity-btn.active');
+            let isQDragging = false;
+            let qStartX, qCurrentX;
+
+            // Función para actualizar la posición y ancho de la qPill
+            const updateQPill = (button, animate = true) => {
+                if (!animate) {
+                    qPill.style.transition = 'none';
+                }
+                qPill.style.width = `${button.offsetWidth}px`;
+                qPill.style.left = `${button.offsetLeft}px`;
+                if (!animate) {
+                    setTimeout(() => {
+                        qPill.style.transition = 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease';
+                    }, 0);
+                }
+            };
+
+            // Inicializar qPill en el botón activo
+            updateQPill(activeQButton, false);
+
+            // Manejar clics en botones de cantidad
+            quantityButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    quantityButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    activeQButton = button;
+                    updateQPill(button);
+                    applyQuantity(button.getAttribute('data-quantity'));
+                });
+            });
+
+            // Función para aplicar cantidad y actualizar precio e imagen
+            const applyQuantity = (quantity) => {
+                const prices = {
+                    '1': 150,
+                    '2': 280,
+                    '3': 380,
+                    '5': 480
+                };
+                const images = {
+                    '1': 'https://i.ibb.co/xtH7W17m/joint-png.png',
+                    '2': 'https://i.ibb.co/kVFPnD0Y/2preroll.png',
+                    '3': 'https://i.ibb.co/G4MJHyT3/3preroll.png',
+                    '5': 'https://i.ibb.co/ymKnSyjv/5preroll.png'
+                };
+                document.getElementById('pre-roll-price').textContent = `$${prices[quantity]}`;
+                document.getElementById('preroll-image').src = images[quantity];
+            };
+
+            // Inicializar precio e imagen
+            applyQuantity(activeQButton.getAttribute('data-quantity'));
+
+            // Manejar inicio de drag para cantidad
+            const startQDrag = (e) => {
+                const clientX = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX);
+                const rect = quantityContainer.getBoundingClientRect();
+                const clickX = clientX - rect.left;
+                const pillLeft = parseFloat(qPill.style.left || 0);
+                const pillWidth = qPill.offsetWidth;
+                if (clickX >= pillLeft && clickX <= pillLeft + pillWidth) {
+                    initiateQDrag(clientX);
+                    e.preventDefault();
+                }
+            };
+
+            // Función para iniciar el drag inmediatamente para cantidad
+            const initiateQDrag = (clientX) => {
+                isQDragging = true;
+                quantityContainer.classList.add('dragging-mode');
+                qPill.classList.add('dragging');
+                qPill.style.transition = 'transform 0.2s ease';
+                qStartX = clientX - parseFloat(qPill.style.left || 0);
+                document.addEventListener('mousemove', onQDrag);
+                document.addEventListener('touchmove', onQDrag, { passive: false });
+                document.addEventListener('mouseup', endQDrag);
+                document.addEventListener('touchend', endQDrag);
+            };
+
+            // Manejar movimiento para cantidad
+            const onQDrag = (e) => {
+                if (!isQDragging) return;
+                e.preventDefault();
+                const clientX = (e.type === 'touchmove' ? e.touches[0].clientX : e.clientX);
+                qCurrentX = clientX - qStartX;
+                const minLeft = 0;
+                const maxLeft = quantityContainer.offsetWidth - qPill.offsetWidth;
+                qPill.style.left = `${Math.max(minLeft, Math.min(qCurrentX, maxLeft))}px`;
+            };
+
+            // Manejar fin de drag para cantidad
+            const endQDrag = (e) => {
+                if (!isQDragging) return;
+                isQDragging = false;
+                quantityContainer.classList.remove('dragging-mode');
+                qPill.classList.remove('dragging');
+                qPill.style.transition = 'left 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), width 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), transform 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                document.removeEventListener('mousemove', onQDrag);
+                document.removeEventListener('touchmove', onQDrag);
+                document.removeEventListener('mouseup', endQDrag);
+                document.removeEventListener('touchend', endQDrag);
+                // Encontrar el botón en cuya área cae el centro de la qPill
+                let targetButton = null;
+                const pillCenter = parseFloat(qPill.style.left) + qPill.offsetWidth / 2;
+                quantityButtons.forEach(button => {
+                    if (pillCenter >= button.offsetLeft && pillCenter < button.offsetLeft + button.offsetWidth) {
+                        targetButton = button;
+                    }
+                });
+                // Actualizar al botón target con animación de rebote
+                if (targetButton) {
+                    quantityButtons.forEach(btn => btn.classList.remove('active'));
+                    targetButton.classList.add('active');
+                    activeQButton = targetButton;
+                    updateQPill(targetButton, true);
+                    applyQuantity(targetButton.getAttribute('data-quantity'));
+                } else {
+                    // Si no se encuentra, snap back
+                    updateQPill(activeQButton, true);
+                }
+                // Restaurar transición original después de la animación
+                setTimeout(() => {
+                    qPill.style.transition = 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease';
+                }, 300);
+            };
+
+            // Habilitar drag en el contenedor de cantidad
+            quantityContainer.addEventListener('mousedown', startQDrag);
+            quantityContainer.addEventListener('touchstart', startQDrag, { passive: false });
         });
     </script>
 </body>
