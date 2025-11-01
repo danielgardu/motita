@@ -159,6 +159,14 @@
             opacity: 0.8;
             background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 60%);
         }
+
+        /* Ajustes para móvil */
+        @media (max-width: 640px) {
+            #quantity-selector-flor .quantity-btn {
+                font-size: 0.75rem;
+                padding: 0.125rem 0.5rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -191,8 +199,8 @@
                                             <div id="quantity-pill-flor"></div>
                                             <button class="quantity-btn active" data-quantity="3.5g"><span>3.5g</span></button>
                                             <button class="quantity-btn" data-quantity="7g"><span>7g</span></button>
-                                            <button class="quantity-btn" data-quantity="1/2 oz"><span>1/2 oz</span></button>
-                                            <button class="quantity-btn" data-quantity="1 oz"><span>1 oz</span></button>
+                                            <button class="quantity-btn" data-quantity="1/2 oz"><span>1/2oz</span></button>
+                                            <button class="quantity-btn" data-quantity="1 oz"><span>1<span style="color: white;">.</span>oz</span></button>
                                         </div>
                                         <span id="flor-price" class="text-lg font-semibold text-gray-800">$250</span>
                                     </div>
@@ -245,7 +253,7 @@
             </div>
             <!-- Coming Soon for Pens -->
             <div id="coming-soon-pen" style="display: none;" class="text-center">
-                <img src="https://i.ibb.co/zVjn4NYY/proximamente.png" alt="proximamente" class="w-1/2 mx-auto">
+                <img src="https://i.ibb.co/zVjn4NYY/proximamente.png" alt="proximamente" style="width: 60%; margin: 0 auto;">
             </div>
         </div>
     </div>
