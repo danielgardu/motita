@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="image" href="https://i.ibb.co/7JChDVPG/logov3.png">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -184,9 +185,9 @@
             <div id="filters" class="py-0 px-1">
                 <div id="filter-pill"></div>
                 <button class="filter-btn active" data-filter="all"><img src="" class="h-16 w-16 mb-0.5 invisible" alt=""><span>Todo</span></button>
-                <button class="filter-btn" data-filter="flor"><img src="https://i.ibb.co/JFKbddW3/cogolllodib.png" class="h-16 w-16 mb-0.5" alt="Flores"><span>Flores</span></button>
-                <button class="filter-btn" data-filter="joint"><img src="https://i.ibb.co/RTLbq7ww/gallitodraw2.png" class="h-16 w-16 mb-0.5" alt="Pre-Roll"><span>Pre-Roll</span></button>
-                <button class="filter-btn" data-filter="pen"><img src="https://i.ibb.co/0y53WRBv/vapene.png" class="h-16 w-16 mb-0.5" alt="Pens"><span>Pens</span></button>
+                <button class="filter-btn" data-filter="flor"><img src="https://i.ibb.co/JFKbddW3/cogolllodib.png" loading="lazy" class="h-16 w-16 mb-0.5" alt="Flores"><span>Flores</span></button>
+                <button class="filter-btn" data-filter="joint"><img src="https://i.ibb.co/RTLbq7ww/gallitodraw2.png" loading="lazy" class="h-16 w-16 mb-0.5" alt="Pre-Roll"><span>Pre-Roll</span></button>
+                <button class="filter-btn" data-filter="pen"><img src="https://i.ibb.co/0y53WRBv/vapene.png" loading="lazy" class="h-16 w-16 mb-0.5" alt="Pens"><span>Pens</span></button>
             </div>
         </div>
         <!-- Grid de Productos -->
@@ -196,7 +197,7 @@
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
                     <div class="product-content p-5">
                         <div class="flex items-start">
-                            <img src="https://i.ibb.co/v4hHDyhh/wedxxxx.png" alt="wedxxxx" class="h-24 w-24 mr-5">
+                            <img src="https://i.ibb.co/v4hHDyhh/wedxxxx.png" loading="lazy" alt="wedxxxx" class="h-24 w-24 mr-5">
                             <div class="flex-1">
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                                     <h3 class="text-lg sm:text-xl font-bold text-gray-900">OG Kush (Greenhouse)</h3>
@@ -229,7 +230,7 @@
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
                     <div class="product-content p-5">
                         <div class="flex items-start">
-                            <img id="preroll-image" src="https://i.ibb.co/xtH7W17m/joint-png.png" alt="joint-png" class="h-24 w-24 mr-5">
+                            <img id="preroll-image" src="https://i.ibb.co/xtH7W17m/joint-png.png" loading="lazy" alt="joint-png" class="h-24 w-24 mr-5">
                             <div class="flex-1">
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                                     <h3 class="text-xl font-bold text-gray-900">Granddaddy Preroll</h3>
@@ -259,7 +260,7 @@
             </div>
             <!-- Coming Soon for Pens -->
             <div id="coming-soon-pen" style="display: none;" class="text-center">
-                <img src="https://i.ibb.co/zVjn4NYY/proximamente.png" alt="proximamente" style="width: 60%; margin: 0 auto;">
+                <img src="https://i.ibb.co/zVjn4NYY/proximamente.png" loading="lazy" alt="proximamente" style="width: 60%; margin: 0 auto;">
             </div>
         </div>
     </div>
