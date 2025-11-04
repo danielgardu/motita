@@ -633,7 +633,8 @@
             let isOriginal = true;
             const originalSrc = 'https://i.ibb.co/XZQBBzWz/logov1-11zon-min.png';
             const alternateSrc = 'https://i.ibb.co/7JmNb5q1/logov2-11zon-min.png';
-            logo.addEventListener('click', () => {
+            // Función para animar el logo (usada tanto por clic como por animación automática)
+            const animateLogo = () => {
                 const rotation = (Math.random() * 6 - 3); // Random between -3 and 3 degrees for subtler rotation
                 logo.style.setProperty('--rotation', `${rotation}deg`);
                 logo.classList.remove('bounce');
@@ -642,7 +643,17 @@
                 // Toggle image
                 isOriginal = !isOriginal;
                 logo.src = isOriginal ? originalSrc : alternateSrc;
-            });
+            };
+
+            logo.addEventListener('click', animateLogo);
+
+            // Animación automática al cargar la página
+            setTimeout(() => {
+                animateLogo(); // Primer cambio (a logo alternativo)
+                setTimeout(() => {
+                    animateLogo(); // Segundo cambio (vuelve al original)
+                }, 400); // Después de 0.4 segundos
+            }, 1000); // Después de 1 segundo
         });
     </script>
 </body>
