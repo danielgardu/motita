@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="preload" as="image" href="https://i.ibb.co/s4XDqNx/lanaveshop.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/bR8sPGJT/lanave-shop.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/SD7Vh6s3/lanaveee-min.png">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -182,7 +183,10 @@
             transition: transform 0.2s ease-in-out;
             cursor: pointer;
         }
-        #logo.bounce {
+        #logo-animated {
+            transition: opacity 0.2s ease-in-out;
+        }
+        #logo.bounce, #logo-animated.bounce {
             animation: bounce 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
         @keyframes bounce {
@@ -203,8 +207,9 @@
         Envios GRATIS en TODOS los productos
     </div>
     <div class="container mx-auto max-w-2xl lg:max-w-6xl p-4 sm:p-6 lg:px-8 lg:py-6">
-        <header class="text-center mb-4">
-            <img id="logo" src="https://i.ibb.co/s4XDqNx/lanaveshop.png" alt="lanaveshop" class="mx-auto h-[8.5rem]">
+        <header class="text-center mb-4 relative">
+            <img id="logo" src="https://i.ibb.co/bR8sPGJT/lanave-shop.png" alt="lanave-shop" class="mx-auto h-[8.5rem]">
+            <img id="logo-animated" src="https://i.ibb.co/SD7Vh6s3/lanaveee-min.png" alt="lanaveee-min" class="mx-auto h-[8.5rem] absolute inset-0 opacity-0 pointer-events-none">
         </header>
         <div class="flex justify-center mb-6 lg:mb-8 z-20">
             <div id="filters" class="py-0 px-1">
@@ -636,22 +641,37 @@
             quantityContainerJoint.addEventListener('touchstart', startQDragJoint, { passive: false });
             // Logo animation
             const logo = document.getElementById('logo');
-            // Función para animar el logo (rebote y rotación)
+            const logoAnimated = document.getElementById('logo-animated');
+
+            // Función para animar el logo superpuesto
             const animateLogo = () => {
                 const rotation = (Math.random() * 6 - 3); // Random between -3 and 3 degrees for subtler rotation
-                logo.style.setProperty('--rotation', `${rotation}deg`);
-                logo.classList.remove('bounce');
-                void logo.offsetWidth; // Force reflow to restart animation
-                logo.classList.add('bounce');
+                logoAnimated.style.setProperty('--rotation', `${rotation}deg`);
+                logoAnimated.classList.remove('bounce');
+                void logoAnimated.offsetWidth; // Force reflow to restart animation
+                logoAnimated.classList.add('bounce');
+
+                // Ocultar después de que termine la animación (0.4s)
+                setTimeout(() => {
+                    logoAnimated.classList.add('opacity-0');
+                }, 400);
             };
 
-            logo.addEventListener('click', animateLogo);
+            // Event listener para mostrar y animar el logo superpuesto
+            logo.addEventListener('click', () => {
+                logoAnimated.classList.remove('opacity-0'); // Mostrar
+                animateLogo(); // Animar
+            });
 
             // Animación automática al cargar la página
             setTimeout(() => {
+                logoAnimated.classList.remove('opacity-0'); // Mostrar
                 animateLogo(); // Primera animación
                 setTimeout(() => {
-                    animateLogo(); // Segunda animación
+                    logoAnimated.classList.remove('opacity-0'); // Mostrar de nuevo
+                    setTimeout(() => {
+                        animateLogo(); // Segunda animación
+                    }, 50); // Pequeño delay para asegurar que se muestre
                 }, 400); // Después de 0.4 segundos
             }, 1000); // Después de 1 segundo
         });
