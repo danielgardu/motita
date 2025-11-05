@@ -9,8 +9,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="preload" as="image" href="https://i.ibb.co/bR8sPGJT/lanave-shop.png">
-    <link rel="preload" as="image" href="https://i.ibb.co/SD7Vh6s3/lanaveee-min.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/7dZkRjh1/lanave-shop-logo-min.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/SwW3yWpt/la-navee.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/tpYDHMb4/lanave-png.png">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -185,6 +186,9 @@
             -webkit-user-select: none;
             -webkit-user-drag: none;
             -moz-user-drag: none;
+            position: relative;
+            z-index: 2;
+            pointer-events: none;
         }
         #logo-animated {
             cursor: grab;
@@ -198,21 +202,26 @@
             pointer-events: auto;
             will-change: transform, left, top;
             touch-action: none;
+            z-index: 1;
         }
         #logo-animated.dragging {
             cursor: grabbing !important;
             position: fixed !important;
-            z-index: 1000;
+            z-index: 1000 !important;
             transition: none !important;
             transform: scale(1.15) rotate(2deg);
             pointer-events: auto;
             filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
         }
         #logo-animated.returning {
-            transition: left 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                        top 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                        transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        top 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        transform 0.6s ease-out !important;
             pointer-events: none;
+            z-index: 1000 !important;
+        }
+        #logo-animated.active {
+            z-index: 1000 !important;
         }
     </style>
 </head>
@@ -222,8 +231,8 @@
     </div>
     <div class="container mx-auto max-w-2xl lg:max-w-6xl p-4 sm:p-6 lg:px-8 lg:py-6">
         <header class="text-center mb-4 relative">
-            <img id="logo" src="https://i.ibb.co/bR8sPGJT/lanave-shop.png" alt="lanave-shop" class="mx-auto h-[8.5rem]" draggable="false">
-            <img id="logo-animated" src="https://i.ibb.co/SD7Vh6s3/lanaveee-min.png" alt="lanaveee-min" class="mx-auto h-[8.5rem] absolute inset-0" draggable="false">
+            <img id="logo" src="https://i.ibb.co/7dZkRjh1/lanave-shop-logo-min.png" alt="lanave-shop-logo-min" class="mx-auto h-[8.5rem]" draggable="false">
+            <img id="logo-animated" src="https://i.ibb.co/SwW3yWpt/la-navee.png" alt="la-navee" class="mx-auto h-[8.5rem] absolute inset-0" draggable="false">
         </header>
         <div class="flex justify-center mb-6 lg:mb-8 z-20">
             <div id="filters" class="py-0 px-1">
@@ -656,11 +665,25 @@
             // Logo animation
             const logo = document.getElementById('logo');
             const logoAnimated = document.getElementById('logo-animated');
-            const originalLogoSrc = 'https://i.ibb.co/bR8sPGJT/lanave-shop.png';
-            const alternativeLogoSrc = 'https://i.ibb.co/Pz0TKy1m/lanave-l-min.png';
+            const originalLogoSrc = 'https://i.ibb.co/7dZkRjh1/lanave-shop-logo-min.png';
+            const alternativeLogoSrc = 'https://i.ibb.co/tpYDHMb4/lanave-png.png';
+            
+            // PRECARGAR la imagen alternativa para evitar delay
+            const preloadImg = new Image();
+            preloadImg.src = alternativeLogoSrc;
+            
             let isDraggingLogo = false;
             let logoStartX, logoStartY;
             let originalLogoRect = null;
+            
+            // Variables para tracking de velocidad (física mejorada)
+            let lastMouseX = 0;
+            let lastMouseY = 0;
+            let lastMoveTime = 0;
+            let velocityX = 0;
+            let velocityY = 0;
+            let velocitySamples = []; // Array para promediar velocidad y suavizar
+            const maxSamples = 5;
 
             // Prevenir selección y arrastre nativo en ambas imágenes
             [logo, logoAnimated].forEach(img => {
@@ -676,6 +699,9 @@
 
             // Función para iniciar el drag del logo animado
             const startLogoDrag = (e) => {
+                // Prevenir si ya está en proceso de drag
+                if (isDraggingLogo) return;
+                
                 // Prevenir comportamiento por defecto inmediatamente
                 e.preventDefault();
                 e.stopPropagation();
@@ -683,25 +709,42 @@
                 const clientX = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX);
                 const clientY = (e.type === 'touchstart' ? e.touches[0].clientY : e.clientY);
                 
-                // Guardar posición original
+                // LIMPIEZA COMPLETA antes de iniciar (prevenir bugs de estado anterior)
+                logoAnimated.classList.remove('returning');
+                logoAnimated.style.transition = 'none';
+                logoAnimated.style.opacity = '1';
+                logoAnimated.style.transform = '';
+                
+                // Forzar reflow para aplicar limpieza
+                void logoAnimated.offsetWidth;
+                
+                // Guardar posición original ACTUAL (no la antigua)
                 originalLogoRect = logoAnimated.getBoundingClientRect();
                 
                 // Calcular offset del mouse/touch relativo al logo
                 logoStartX = clientX - originalLogoRect.left;
                 logoStartY = clientY - originalLogoRect.top;
 
+                // Inicializar tracking de velocidad
+                lastMouseX = clientX;
+                lastMouseY = clientY;
+                lastMoveTime = Date.now();
+                velocityX = 0;
+                velocityY = 0;
+                velocitySamples = []; // Limpiar muestras previas
+
                 // INICIAR DRAG INMEDIATAMENTE sin umbral
                 isDraggingLogo = true;
                 logoAnimated.classList.add('dragging');
-                logoAnimated.classList.remove('returning');
                 
                 // Convertir a posición fija inmediatamente
                 logoAnimated.style.position = 'fixed';
                 logoAnimated.style.left = `${originalLogoRect.left}px`;
                 logoAnimated.style.top = `${originalLogoRect.top}px`;
                 logoAnimated.style.margin = '0';
+                logoAnimated.style.zIndex = '1000';
 
-                // CAMBIAR EL LOGO ESTÁTICO INMEDIATAMENTE SIN FADE
+                // CAMBIAR EL LOGO ESTÁTICO INMEDIATAMENTE SIN FADE (con imagen precargada)
                 logo.src = alternativeLogoSrc;
 
                 // Agregar listeners temporales
@@ -711,7 +754,7 @@
                 document.addEventListener('touchend', endLogoDrag);
             };
 
-            // Función para manejar el movimiento del drag
+            // Función para manejar el movimiento del drag (OPTIMIZADA)
             const onLogoDrag = (e) => {
                 if (!isDraggingLogo) return;
 
@@ -720,15 +763,37 @@
                 
                 const clientX = (e.type === 'touchmove' ? e.touches[0].clientX : e.clientX);
                 const clientY = (e.type === 'touchmove' ? e.touches[0].clientY : e.clientY);
+                const currentTime = Date.now();
+
+                // Calcular velocidad para física de inercia (MEJORADA con promedio)
+                const deltaTime = currentTime - lastMoveTime;
+                if (deltaTime > 0 && deltaTime < 100) { // Ignorar deltas muy grandes
+                    const currentVelX = (clientX - lastMouseX) / deltaTime;
+                    const currentVelY = (clientY - lastMouseY) / deltaTime;
+                    
+                    // Guardar muestra de velocidad
+                    velocitySamples.push({ x: currentVelX, y: currentVelY });
+                    
+                    // Mantener solo las últimas muestras
+                    if (velocitySamples.length > maxSamples) {
+                        velocitySamples.shift();
+                    }
+                    
+                    // Calcular velocidad promedio para suavizar
+                    velocityX = velocitySamples.reduce((sum, v) => sum + v.x, 0) / velocitySamples.length;
+                    velocityY = velocitySamples.reduce((sum, v) => sum + v.y, 0) / velocitySamples.length;
+                }
+
+                lastMouseX = clientX;
+                lastMouseY = clientY;
+                lastMoveTime = currentTime;
 
                 const currentX = clientX - logoStartX;
                 const currentY = clientY - logoStartY;
 
-                // Usar requestAnimationFrame para movimiento suave
-                requestAnimationFrame(() => {
-                    logoAnimated.style.left = `${currentX}px`;
-                    logoAnimated.style.top = `${currentY}px`;
-                });
+                // Movimiento directo sin requestAnimationFrame para máxima responsividad
+                logoAnimated.style.left = `${currentX}px`;
+                logoAnimated.style.top = `${currentY}px`;
             };
 
             // Función para terminar el drag del logo animado
@@ -741,30 +806,100 @@
                 document.removeEventListener('mouseup', endLogoDrag);
                 document.removeEventListener('touchend', endLogoDrag);
 
-                // Remover el estado de dragging pero mantener la posición donde se soltó
+                // Remover el estado de dragging
                 logoAnimated.classList.remove('dragging');
                 
-                // QUEDARSE un momento donde se soltó (400ms)
+                // Obtener posición actual
+                const currentLeft = parseFloat(logoAnimated.style.left);
+                const currentTop = parseFloat(logoAnimated.style.top);
+                
+                // Calcular distancia de inercia basada en velocidad (FÍSICA OPTIMIZADA)
+                const inertiaMultiplier = 180;
+                const maxInertia = 350;
+                const minVelocity = 0.1;
+                
+                let inertiaX = velocityX * inertiaMultiplier;
+                let inertiaY = velocityY * inertiaMultiplier;
+                
+                // Calcular magnitud de velocidad
+                const velocityMagnitude = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+                
+                // Si la velocidad es muy baja, no aplicar inercia
+                if (velocityMagnitude < minVelocity) {
+                    inertiaX = 0;
+                    inertiaY = 0;
+                }
+                
+                // Limitar la inercia máxima
+                const inertiaMagnitude = Math.sqrt(inertiaX * inertiaX + inertiaY * inertiaY);
+                if (inertiaMagnitude > maxInertia) {
+                    const scale = maxInertia / inertiaMagnitude;
+                    inertiaX *= scale;
+                    inertiaY *= scale;
+                }
+                
+                // Posición final después de la inercia
+                const inertiaLeft = currentLeft + inertiaX;
+                const inertiaTop = currentTop + inertiaY;
+                
+                // LIMPIAR todas las transiciones antes de aplicar nueva
+                logoAnimated.style.transition = 'none';
+                
+                // Forzar reflow para asegurar que se aplique
+                void logoAnimated.offsetWidth;
+                
+                // Aplicar transición suave para inercia
+                logoAnimated.style.transition = 'left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s ease-out';
+                logoAnimated.style.left = `${inertiaLeft}px`;
+                logoAnimated.style.top = `${inertiaTop}px`;
+                logoAnimated.style.transform = 'scale(1) rotate(0deg)';
+                
+                // Después de la inercia, volver a la posición original
                 setTimeout(() => {
-                    // Luego volver SUAVEMENTE a la posición original
+                    // Limpiar transición anterior
+                    logoAnimated.style.transition = 'none';
+                    void logoAnimated.offsetWidth;
+                    
+                    // Aplicar clase returning con su propia transición
                     logoAnimated.classList.add('returning');
                     logoAnimated.style.left = `${originalLogoRect.left}px`;
                     logoAnimated.style.top = `${originalLogoRect.top}px`;
+                    logoAnimated.style.transform = '';
 
-                    // Restaurar el estado original DESPUÉS de la animación de retorno (0.8s)
+                    // Restaurar el estado original DESPUÉS del retorno
                     setTimeout(() => {
                         logoAnimated.classList.remove('returning');
-                        logoAnimated.style.position = '';
-                        logoAnimated.style.left = '';
-                        logoAnimated.style.top = '';
-                        logoAnimated.style.transform = '';
-                        logoAnimated.style.margin = '';
                         
-                        // CAMBIAR DE VUELTA AL LOGO ORIGINAL DESPUÉS DE LLEGAR SIN FADE
+                        // MANTENER z-index alto durante el fade
+                        logoAnimated.style.zIndex = '1000';
+                        
+                        // Cambiar logo estático al original
                         logo.src = originalLogoSrc;
                         
-                        isDraggingLogo = false;
-                    }, 800);
+                        // FADE OUT limpio
+                        logoAnimated.style.transition = 'opacity 0.25s ease-out';
+                        logoAnimated.style.opacity = '0';
+                        
+                        // Limpiar todo después del fade
+                        setTimeout(() => {
+                            // Limpieza completa y definitiva
+                            logoAnimated.classList.remove('returning', 'dragging', 'active');
+                            logoAnimated.style.position = '';
+                            logoAnimated.style.left = '';
+                            logoAnimated.style.top = '';
+                            logoAnimated.style.transform = '';
+                            logoAnimated.style.margin = '';
+                            logoAnimated.style.transition = '';
+                            logoAnimated.style.zIndex = '1';
+                            logoAnimated.style.opacity = '1';
+                            
+                            // Forzar reflow final para asegurar estado limpio
+                            void logoAnimated.offsetWidth;
+                            
+                            // Marcar como disponible para nuevo drag
+                            isDraggingLogo = false;
+                        }, 250);
+                    }, 600);
                 }, 400);
             };
 
