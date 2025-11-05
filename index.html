@@ -180,25 +180,39 @@
             }
         }
         #logo {
-            transition: transform 0.2s ease-in-out;
             cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-user-drag: none;
+            -moz-user-drag: none;
         }
         #logo-animated {
-            transition: opacity 0.2s ease-in-out;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            pointer-events: auto;
+            will-change: transform, left, top;
+            touch-action: none;
         }
-        #logo.bounce, #logo-animated.bounce {
-            animation: bounce 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        #logo-animated.dragging {
+            cursor: grabbing !important;
+            position: fixed !important;
+            z-index: 1000;
+            transition: none !important;
+            transform: scale(1.15) rotate(2deg);
+            pointer-events: auto;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
         }
-        @keyframes bounce {
-            0% {
-                transform: scale(1) rotate(0deg);
-            }
-            50% {
-                transform: scale(1.15) rotate(var(--rotation));
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-            }
+        #logo-animated.returning {
+            transition: left 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                        top 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                        transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
         }
     </style>
 </head>
@@ -208,8 +222,8 @@
     </div>
     <div class="container mx-auto max-w-2xl lg:max-w-6xl p-4 sm:p-6 lg:px-8 lg:py-6">
         <header class="text-center mb-4 relative">
-            <img id="logo" src="https://i.ibb.co/bR8sPGJT/lanave-shop.png" alt="lanave-shop" class="mx-auto h-[8.5rem]">
-            <img id="logo-animated" src="https://i.ibb.co/SD7Vh6s3/lanaveee-min.png" alt="lanaveee-min" class="mx-auto h-[8.5rem] absolute inset-0 opacity-0 pointer-events-none">
+            <img id="logo" src="https://i.ibb.co/bR8sPGJT/lanave-shop.png" alt="lanave-shop" class="mx-auto h-[8.5rem]" draggable="false">
+            <img id="logo-animated" src="https://i.ibb.co/SD7Vh6s3/lanaveee-min.png" alt="lanaveee-min" class="mx-auto h-[8.5rem] absolute inset-0" draggable="false">
         </header>
         <div class="flex justify-center mb-6 lg:mb-8 z-20">
             <div id="filters" class="py-0 px-1">
@@ -642,38 +656,121 @@
             // Logo animation
             const logo = document.getElementById('logo');
             const logoAnimated = document.getElementById('logo-animated');
+            const originalLogoSrc = 'https://i.ibb.co/bR8sPGJT/lanave-shop.png';
+            const alternativeLogoSrc = 'https://i.ibb.co/Pz0TKy1m/lanave-l-min.png';
+            let isDraggingLogo = false;
+            let logoStartX, logoStartY;
+            let originalLogoRect = null;
 
-            // Función para animar el logo superpuesto
-            const animateLogo = () => {
-                const rotation = (Math.random() * 6 - 3); // Random between -3 and 3 degrees for subtler rotation
-                logoAnimated.style.setProperty('--rotation', `${rotation}deg`);
-                logoAnimated.classList.remove('bounce');
-                void logoAnimated.offsetWidth; // Force reflow to restart animation
-                logoAnimated.classList.add('bounce');
+            // Prevenir selección y arrastre nativo en ambas imágenes
+            [logo, logoAnimated].forEach(img => {
+                img.addEventListener('dragstart', (e) => {
+                    e.preventDefault();
+                    return false;
+                });
+                img.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    return false;
+                });
+            });
 
-                // Ocultar después de que termine la animación (0.4s)
+            // Función para iniciar el drag del logo animado
+            const startLogoDrag = (e) => {
+                // Prevenir comportamiento por defecto inmediatamente
+                e.preventDefault();
+                e.stopPropagation();
+
+                const clientX = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX);
+                const clientY = (e.type === 'touchstart' ? e.touches[0].clientY : e.clientY);
+                
+                // Guardar posición original
+                originalLogoRect = logoAnimated.getBoundingClientRect();
+                
+                // Calcular offset del mouse/touch relativo al logo
+                logoStartX = clientX - originalLogoRect.left;
+                logoStartY = clientY - originalLogoRect.top;
+
+                // INICIAR DRAG INMEDIATAMENTE sin umbral
+                isDraggingLogo = true;
+                logoAnimated.classList.add('dragging');
+                logoAnimated.classList.remove('returning');
+                
+                // Convertir a posición fija inmediatamente
+                logoAnimated.style.position = 'fixed';
+                logoAnimated.style.left = `${originalLogoRect.left}px`;
+                logoAnimated.style.top = `${originalLogoRect.top}px`;
+                logoAnimated.style.margin = '0';
+
+                // CAMBIAR EL LOGO ESTÁTICO INMEDIATAMENTE SIN FADE
+                logo.src = alternativeLogoSrc;
+
+                // Agregar listeners temporales
+                document.addEventListener('mousemove', onLogoDrag);
+                document.addEventListener('touchmove', onLogoDrag, { passive: false });
+                document.addEventListener('mouseup', endLogoDrag);
+                document.addEventListener('touchend', endLogoDrag);
+            };
+
+            // Función para manejar el movimiento del drag
+            const onLogoDrag = (e) => {
+                if (!isDraggingLogo) return;
+
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const clientX = (e.type === 'touchmove' ? e.touches[0].clientX : e.clientX);
+                const clientY = (e.type === 'touchmove' ? e.touches[0].clientY : e.clientY);
+
+                const currentX = clientX - logoStartX;
+                const currentY = clientY - logoStartY;
+
+                // Usar requestAnimationFrame para movimiento suave
+                requestAnimationFrame(() => {
+                    logoAnimated.style.left = `${currentX}px`;
+                    logoAnimated.style.top = `${currentY}px`;
+                });
+            };
+
+            // Función para terminar el drag del logo animado
+            const endLogoDrag = (e) => {
+                if (!isDraggingLogo) return;
+
+                // Remover listeners
+                document.removeEventListener('mousemove', onLogoDrag);
+                document.removeEventListener('touchmove', onLogoDrag);
+                document.removeEventListener('mouseup', endLogoDrag);
+                document.removeEventListener('touchend', endLogoDrag);
+
+                // Remover el estado de dragging pero mantener la posición donde se soltó
+                logoAnimated.classList.remove('dragging');
+                
+                // QUEDARSE un momento donde se soltó (400ms)
                 setTimeout(() => {
-                    logoAnimated.classList.add('opacity-0');
+                    // Luego volver SUAVEMENTE a la posición original
+                    logoAnimated.classList.add('returning');
+                    logoAnimated.style.left = `${originalLogoRect.left}px`;
+                    logoAnimated.style.top = `${originalLogoRect.top}px`;
+
+                    // Restaurar el estado original DESPUÉS de la animación de retorno (0.8s)
+                    setTimeout(() => {
+                        logoAnimated.classList.remove('returning');
+                        logoAnimated.style.position = '';
+                        logoAnimated.style.left = '';
+                        logoAnimated.style.top = '';
+                        logoAnimated.style.transform = '';
+                        logoAnimated.style.margin = '';
+                        
+                        // CAMBIAR DE VUELTA AL LOGO ORIGINAL DESPUÉS DE LLEGAR SIN FADE
+                        logo.src = originalLogoSrc;
+                        
+                        isDraggingLogo = false;
+                    }, 800);
                 }, 400);
             };
 
-            // Event listener para mostrar y animar el logo superpuesto
-            logo.addEventListener('click', () => {
-                logoAnimated.classList.remove('opacity-0'); // Mostrar
-                animateLogo(); // Animar
-            });
-
-            // Animación automática al cargar la página
-            setTimeout(() => {
-                logoAnimated.classList.remove('opacity-0'); // Mostrar
-                animateLogo(); // Primera animación
-                setTimeout(() => {
-                    logoAnimated.classList.remove('opacity-0'); // Mostrar de nuevo
-                    setTimeout(() => {
-                        animateLogo(); // Segunda animación
-                    }, 50); // Pequeño delay para asegurar que se muestre
-                }, 400); // Después de 0.4 segundos
-            }, 1000); // Después de 1 segundo
+            // Event listeners para el drag del logo animado - EN EL LOGO ANIMADO DIRECTAMENTE
+            logoAnimated.addEventListener('mousedown', startLogoDrag, { passive: false });
+            logoAnimated.addEventListener('touchstart', startLogoDrag, { passive: false });
         });
     </script>
 </body>
