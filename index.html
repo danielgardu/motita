@@ -129,6 +129,7 @@
         .quantity-btn.active {
             color: #ffffff;
         }
+        /* Pildoras rojas para productos con múltiples opciones */
         #quantity-pill-flor, #quantity-pill-joint {
             position: absolute;
             top: 0;
@@ -142,10 +143,14 @@
             z-index: 1;
             transform-origin: center center;
         }
+
+        /* Efecto de arrastre para pildoras rojas */
         #quantity-pill-flor.dragging, #quantity-pill-joint.dragging {
             transform: scale(1.2);
             box-shadow: 0 4px 20px rgba(220, 38, 38, 0.5), inset 0 2px 4px rgba(248, 113, 113, 0.5);
         }
+
+        /* Efecto de brillo para pildoras rojas */
         #quantity-pill-flor::before, #quantity-pill-joint::before {
             content: '';
             position: absolute;
@@ -158,10 +163,13 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
+
+        /* Efecto de brillo al arrastrar para pildoras rojas */
         #quantity-pill-flor.dragging::before, #quantity-pill-joint.dragging::before {
             opacity: 0.8;
             background: radial-gradient(circle, rgba(252, 165, 165, 0.5) 0%, transparent 60%);
         }
+
         /* Ajustes para móvil */
         @media (max-width: 640px) {
             #quantity-selector-flor .quantity-btn {
@@ -219,9 +227,157 @@
                         transform 0.6s ease-out !important;
             pointer-events: auto;
             z-index: 1000 !important;
-        }
+            }
         #logo-animated.active {
             z-index: 1000 !important;
+        }
+
+        /* Etiqueta "Nuevo" para productos */
+        .product-new-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            padding: 6px 20px;
+            min-width: 80px; /* ANCHO MÍNIMO IGUAL PARA AMBAS */
+            background: rgba(249, 115, 22, 0.25);
+            border: 1px solid rgba(249, 115, 22, 0.35);
+            border-radius: 9999px;
+            color: #fed7aa;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            backdrop-filter: blur(18px) saturate(180%);
+            box-shadow: 0 6px 18px rgba(249, 115, 22, 0.25);
+            z-index: 20; /* POR DELANTE de todo */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-new-badge::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.05));
+            pointer-events: none;
+        }
+
+        @keyframes newBadgeGlow {
+            0%, 100% {
+                box-shadow: 0 6px 18px rgba(249, 115, 22, 0.3);
+            }
+            50% {
+                box-shadow: 0 10px 24px rgba(249, 115, 22, 0.45);
+            }
+        }
+
+        .product-new-badge.glow {
+            animation: newBadgeGlow 3s ease-in-out infinite;
+        }
+
+        /* Animación de la etiqueta "Nuevo" cuando se hace hover en la tarjeta padre */
+        .product-card:hover .product-new-badge {
+            transform: translateX(-50%) translateY(-50%) scale(1.05);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35);
+        }
+
+        .product-card:hover .product-new-badge.glow {
+            animation-duration: 1.5s; /* Acelerar la animación durante hover */
+        }
+
+        /* Etiqueta "Descuento" para productos */
+        .product-discount-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            padding: 6px 20px;
+            min-width: 80px; /* ANCHO MÍNIMO IGUAL PARA AMBAS */
+            background: rgba(255, 0, 0, 0.5); /* ROJO VIVO INTENSO */
+            border: 1px solid rgba(255, 0, 0, 0.8);
+            /* FORMA CON TRIÁNGULO REDONDEADO EN LA IZQUIERDA, DERECHA PLANA CON PUNTAS REDONDEADAS */
+            clip-path: polygon(5% 50%, 10% 35%, 15% 20%, 18% 10%, 20% 5%, 25% 2%, 88% 0%, 97% 5%, 100% 20%, 100% 80%, 97% 95%, 88% 100%, 25% 98%, 20% 95%, 18% 90%, 15% 80%, 10% 65%);
+            color: #ffffff; /* TEXTO BLANCO PARA CONTRASTE */
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            backdrop-filter: blur(18px) saturate(180%);
+            box-shadow: 0 8px 24px rgba(255, 0, 0, 0.5);
+            z-index: 20; /* POR DELANTE de todo */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            /* BRILLA CONSTANTEMENTE */
+            animation: discountBadgeGlow 2s ease-in-out infinite;
+        }
+
+        .product-discount-badge::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            /* MISMA FORMA CON TRIÁNGULO REDONDEADO */
+            clip-path: polygon(5% 50%, 10% 35%, 15% 20%, 18% 10%, 20% 5%, 25% 2%, 88% 0%, 97% 5%, 100% 20%, 100% 80%, 97% 95%, 88% 100%, 25% 98%, 20% 95%, 18% 90%, 15% 80%, 10% 65%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.05));
+            pointer-events: none;
+        }
+
+        @keyframes discountBadgeGlow {
+            0%, 100% {
+                box-shadow: 0 8px 24px rgba(255, 0, 0, 0.6), 0 0 20px rgba(255, 0, 0, 0.4);
+            }
+            50% {
+                box-shadow: 0 12px 32px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.6);
+                transform: translateX(-50%) translateY(-50%) scale(1.02);
+            }
+        }
+
+        /* Posicionamiento cuando hay múltiples etiquetas - MÁS JUNTAS */
+        .product-card:has(.product-new-badge):has(.product-discount-badge) .product-new-badge {
+            left: calc(50% - 48px); /* Mover a la izquierda (más cerca) */
+        }
+
+        .product-card:has(.product-new-badge):has(.product-discount-badge) .product-discount-badge {
+            left: calc(50% + 48px); /* Mover a la derecha (más cerca) */
+        }
+
+        /* Animación de las etiquetas cuando se hace hover en la tarjeta padre */
+        .product-card:hover .product-new-badge {
+            transform: translateX(-50%) translateY(-50%) scale(1.05);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35);
+        }
+
+        .product-card:hover .product-new-badge.glow {
+            animation-duration: 1.5s; /* Acelerar la animación durante hover */
+        }
+
+        .product-card:hover .product-discount-badge {
+            transform: translateX(-50%) translateY(-50%) scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.7);
+            animation-duration: 1.5s; /* MISMA ANIMACIÓN QUE "NUEVO" */
+        }
+
+        /* Estilos para precios con descuento */
+        .price-discount {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .price-original {
+            text-decoration: line-through;
+            opacity: 0.6;
+            font-size: 0.875rem;
+            margin-bottom: 2px;
+        }
+
+        .price-current {
+            font-weight: 700;
+            color: #ffffff; /* Blanco para el precio con descuento */
+            font-size: 0.875rem; /* Mismo tamaño que el precio original */
         }
     </style>
 </head>
@@ -327,6 +483,52 @@
             let activeButton = document.querySelector('.filter-btn.active');
             let isDragging = false;
             let startX, currentX;
+
+            // Función para ajustar espaciado de productos prioritarios en primera posición
+            const adjustNewProductSpacing = (visibleCards) => {
+                // Resetear márgenes de todas las tarjetas
+                productCards.forEach(card => {
+                    card.style.marginTop = '';
+                });
+
+                // Si la primera tarjeta visible tiene etiqueta "Nuevo" o "Descuento", bajarla un poco
+                if (visibleCards.length > 0 && (
+                    visibleCards[0].querySelector('.product-new-badge') ||
+                    visibleCards[0].querySelector('.product-discount-badge')
+                )) {
+                    visibleCards[0].style.marginTop = '1.5rem'; // Bajar la primera tarjeta prioritaria
+                }
+            };
+
+            // Inicializar orden: productos con etiqueta "Nuevo" y "Descuento" primero
+            const initializeProductOrder = () => {
+                const productGrid = document.getElementById('product-grid');
+                const allCards = Array.from(productCards);
+
+                // Separar productos por prioridad: Nuevos/Descuento primero, luego regulares
+                const priorityProducts = allCards.filter(card =>
+                    card.querySelector('.product-new-badge') || card.querySelector('.product-discount-badge')
+                );
+                const regularProducts = allCards.filter(card =>
+                    !card.querySelector('.product-new-badge') && !card.querySelector('.product-discount-badge')
+                );
+
+                // Reordenar: prioridad primero, luego regulares
+                const reorderedCards = [...priorityProducts, ...regularProducts];
+
+                // Reinsertar en el orden correcto
+                reorderedCards.forEach(card => {
+                    productGrid.appendChild(card);
+                });
+
+                // Ajustar espaciado para productos prioritarios
+                adjustNewProductSpacing(reorderedCards);
+            };
+
+            // Ejecutar inicialización del orden con pequeño retraso para asegurar renderizado
+            setTimeout(() => {
+                initializeProductOrder();
+            }, 50);
             // Función para actualizar la posición y ancho de la pill
             const updatePill = (button, animate = true) => {
                 const setStyles = () => {
@@ -360,12 +562,36 @@
             });
             // Función para aplicar filtro
             const applyFilter = (filter) => {
+                // Aplicar filtro de visibilidad
                 productCards.forEach(card => {
                     const category = card.getAttribute('data-category');
                     card.style.display = (filter === 'all' || filter === category) ? 'block' : 'none';
                 });
                 const comingSoonPen = document.getElementById('coming-soon-pen');
                 comingSoonPen.style.display = (filter === 'pen') ? 'block' : 'none';
+
+                // Reordenar productos: productos con etiqueta "Nuevo" y "Descuento" primero
+                const productGrid = document.getElementById('product-grid');
+                const visibleCards = Array.from(productCards).filter(card => card.style.display !== 'none');
+
+                // Separar productos por prioridad: Nuevos/Descuento primero, luego regulares
+                const priorityProducts = visibleCards.filter(card =>
+                    card.querySelector('.product-new-badge') || card.querySelector('.product-discount-badge')
+                );
+                const regularProducts = visibleCards.filter(card =>
+                    !card.querySelector('.product-new-badge') && !card.querySelector('.product-discount-badge')
+                );
+
+                // Reordenar: prioridad primero, luego regulares
+                const reorderedCards = [...priorityProducts, ...regularProducts];
+
+                // Reinsertar en el orden correcto
+                reorderedCards.forEach(card => {
+                    productGrid.appendChild(card);
+                });
+
+                // Ajustar espaciado para productos nuevos en primera posición
+                adjustNewProductSpacing(reorderedCards);
             };
             // Manejar inicio de drag
             const startDrag = (e) => {
@@ -662,6 +888,7 @@
             };
             quantityContainerJoint.addEventListener('mousedown', startQDragJoint);
             quantityContainerJoint.addEventListener('touchstart', startQDragJoint, { passive: false });
+
             // Logo animation
             const logo = document.getElementById('logo');
             const logoAnimated = document.getElementById('logo-animated');
