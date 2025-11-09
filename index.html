@@ -383,7 +383,7 @@
 </head>
 <body style="background-color: #0a0a0a;" class="text-gray-100">
     <div style="background-color: #1a1a1a; width: 100%; text-align: center; padding: 8px 0; font-size: 0.875rem; font-weight: 500; color: #e5e5e5; border-bottom: 1px solid #2a2a2a;">
-        Envios GRATIS en TODOS los productos
+        1era compra 20% OFF - Pago solo por transferencia
     </div>
     <div class="container mx-auto max-w-2xl lg:max-w-6xl p-4 sm:p-6 lg:px-8 lg:py-6">
         <header class="text-center mb-4 relative">
@@ -402,7 +402,8 @@
         <!-- Grid de Productos -->
         <div id="product-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             <!-- Producto OG Kush (Flor) -->
-            <div class="product-card" data-category="flor">
+            <div class="product-card" data-category="flor" style="position: relative;">
+                <div class="product-discount-badge">20% OFF</div>
                 <div style="background-color: #1a1a1a; border: 1px solid #2a2a2a;" class="rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
                     <div class="product-content p-5">
                         <div class="flex items-start">
@@ -418,7 +419,10 @@
                                             <button class="quantity-btn" data-quantity="1/2 oz"><span>1/2oz</span></button>
                                             <button class="quantity-btn" data-quantity="1 oz"><span>1<span style="color: #1a1a1a;">.</span>oz</span></button>
                                         </div>
-                                        <span id="flor-price" class="text-lg font-semibold" style="color: #e5e5e5;">$250</span>
+                                        <div class="price-discount" id="flor-price-discount">
+                                            <span class="price-original">$250</span>
+                                            <span class="price-current">$200</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-3 text-sm mt-1">
@@ -435,7 +439,8 @@
                 </div>
             </div>
             <!-- Producto Granddaddy Preroll (Joint) -->
-            <div class="product-card" data-category="joint">
+            <div class="product-card" data-category="joint" style="position: relative;">
+                <div class="product-discount-badge">20% OFF</div>
                 <div style="background-color: #1a1a1a; border: 1px solid #2a2a2a;" class="rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
                     <div class="product-content p-5">
                         <div class="flex items-start">
@@ -451,7 +456,10 @@
                                             <button class="quantity-btn" data-quantity="3"><span>3</span></button>
                                             <button class="quantity-btn" data-quantity="5"><span>5</span></button>
                                         </div>
-                                        <span id="pre-roll-price" class="text-lg font-semibold" style="color: #e5e5e5;">$150</span>
+                                        <div class="price-discount" id="joint-price-discount">
+                                            <span class="price-original">$150</span>
+                                            <span class="price-current">$120</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-3 text-sm mt-1">
@@ -702,12 +710,14 @@
             });
             const applyQuantityFlor = (quantity) => {
                 const prices = {
-                    '3.5g': 250,
-                    '7g': 450,
-                    '1/2 oz': 820,
-                    '1 oz': 1370
+                    '3.5g': { original: 250, discount: 200 },
+                    '7g': { original: 450, discount: 360 },
+                    '1/2 oz': { original: 820, discount: 656 },
+                    '1 oz': { original: 1370, discount: 1096 }
                 };
-                document.getElementById('flor-price').textContent = `$${prices[quantity]}`;
+                const priceData = prices[quantity];
+                document.querySelector('#flor-price-discount .price-original').textContent = `$${priceData.original}`;
+                document.querySelector('#flor-price-discount .price-current').textContent = `$${priceData.discount}`;
             };
             applyQuantityFlor(activeQButtonFlor.getAttribute('data-quantity'));
             const startQDragFlor = (e) => {
@@ -810,10 +820,10 @@
             });
             const applyQuantityJoint = (quantity) => {
                 const prices = {
-                    '1': 150,
-                    '2': 280,
-                    '3': 380,
-                    '5': 500
+                    '1': { original: 150, discount: 120 },
+                    '2': { original: 280, discount: 224 },
+                    '3': { original: 380, discount: 304 },
+                    '5': { original: 500, discount: 400 }
                 };
                 const images = {
                     '1': 'https://i.ibb.co/jPpr7YCr/1pre.png',
@@ -821,7 +831,9 @@
                     '3': 'https://i.ibb.co/TBsZ8r3c/3pre.png',
                     '5': 'https://i.ibb.co/0Rj8KMmJ/5pre.png'
                 };
-                document.getElementById('pre-roll-price').textContent = `$${prices[quantity]}`;
+                const priceData = prices[quantity];
+                document.querySelector('#joint-price-discount .price-original').textContent = `$${priceData.original}`;
+                document.querySelector('#joint-price-discount .price-current').textContent = `$${priceData.discount}`;
                 document.getElementById('preroll-image').src = images[quantity];
             };
             applyQuantityJoint(activeQButtonJoint.getAttribute('data-quantity'));
