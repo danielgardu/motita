@@ -328,7 +328,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
             top: 0px;
             left: 50%;
             transform: translateX(-50%) translateY(-50%);
-            padding: 3px 10px;
+            padding: 3px 10px 3px 12px;
             min-width: 50px;
             background: rgba(255, 0, 0, 0.5);
             border: 1px solid rgba(255, 0, 0, 0.8);
@@ -720,7 +720,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
                     
                     // Mostrar solo nuevo precio
                     priceContainer.innerHTML = `
-                        <span id="flor-price" class="text-xs sm:text-base font-semibold price-discounted">$${discountedPrice}</span>
+                        <span id="flor-price" class="text-xs sm:text-sm font-semibold price-discounted">$${discountedPrice}</span>
                     `;
                 } else {
                     discountBadge.style.display = 'none';
