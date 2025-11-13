@@ -275,6 +275,122 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
                 padding: 0.125rem 0.5rem; /* más pequeño */
             }
         }
+        
+        /* Etiqueta "Nuevo" para productos */
+        .product-new-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            padding: 6px 20px;
+            min-width: 80px;
+            background: rgba(249, 115, 22, 0.25);
+            border: 1px solid rgba(249, 115, 22, 0.35);
+            border-radius: 9999px;
+            color: #fed7aa;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            backdrop-filter: blur(18px) saturate(180%);
+            box-shadow: 0 6px 18px rgba(249, 115, 22, 0.25);
+            z-index: 20;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .product-new-badge::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.05));
+            pointer-events: none;
+        }
+        @keyframes newBadgeGlow {
+            0%, 100% {
+                box-shadow: 0 6px 18px rgba(249, 115, 22, 0.3);
+            }
+            50% {
+                box-shadow: 0 10px 24px rgba(249, 115, 22, 0.45);
+            }
+        }
+        .product-new-badge.glow {
+            animation: newBadgeGlow 3s ease-in-out infinite;
+        }
+        
+        /* Etiqueta "Descuento" para productos */
+        .product-discount-badge {
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            padding: 3px 10px;
+            min-width: 50px;
+            background: rgba(255, 0, 0, 0.5);
+            border: 1px solid rgba(255, 0, 0, 0.8);
+            clip-path: polygon(5% 50%, 10% 35%, 15% 20%, 18% 10%, 20% 5%, 25% 2%, 88% 0%, 97% 5%, 100% 20%, 100% 80%, 97% 95%, 88% 100%, 25% 98%, 20% 95%, 18% 90%, 15% 80%, 10% 65%);
+            color: #ffffff;
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            backdrop-filter: blur(18px) saturate(180%);
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.5);
+            z-index: 20;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .product-discount-badge::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            clip-path: polygon(5% 50%, 10% 35%, 15% 20%, 18% 10%, 20% 5%, 25% 2%, 88% 0%, 97% 5%, 100% 20%, 100% 80%, 97% 95%, 88% 100%, 25% 98%, 20% 95%, 18% 90%, 15% 80%, 10% 65%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.05));
+            pointer-events: none;
+        }
+        @keyframes discountBadgeGlow {
+            0%, 100% {
+                box-shadow: 0 4px 12px rgba(255, 0, 0, 0.6), 0 0 10px rgba(255, 0, 0, 0.4);
+            }
+            50% {
+                box-shadow: 0 6px 16px rgba(255, 0, 0, 0.8), 0 0 15px rgba(255, 0, 0, 0.6);
+            }
+        }
+        
+        /* Animación de las etiquetas cuando se hace hover en la tarjeta padre */
+        .product-card:hover .product-new-badge {
+            transform: translateX(-50%) translateY(-50%) scale(1.05);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35);
+        }
+        .product-card:hover .product-new-badge.glow {
+            animation-duration: 1.5s;
+        }
+        .product-card:hover .product-discount-badge {
+            transform: translateX(-50%) translateY(-50%) scale(1.05);
+            box-shadow: 0 6px 16px rgba(255, 0, 0, 0.8);
+        }
+        
+        /* Estilos para precios con descuento */
+        #flor-price-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .price-original {
+            text-decoration: line-through;
+            opacity: 0.6;
+            font-size: 0.75rem;
+            color: #888888;
+            white-space: nowrap;
+            margin-bottom: 0.25rem;
+            }
+        .price-discounted {
+            font-weight: 700;
+            color: #ffffff;
+        }
+        
         #logo {
             cursor: pointer;
             user-select: none;
@@ -341,7 +457,8 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
         <!-- Grid de Productos -->
         <div id="product-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             <!-- Producto OG Kush (Flor) -->
-            <div class="product-card" data-category="flor">
+            <div class="product-card" data-category="flor" style="position: relative;">
+                <div class="product-discount-badge" id="flor-discount-badge" style="display: none;">12% OFF</div>
                 <div style="background-color: #141414; border: 1px solid #1a1a1a;" class="rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
                     <div class="product-content p-5">
                         <div class="flex items-start">
@@ -357,12 +474,17 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
                                             <button class="quantity-btn" data-quantity="1/2 oz"><span>1/2oz</span></button>
                                             <button class="quantity-btn" data-quantity="1 oz"><span>1<span style="color: #1a1a1a;">.</span>oz</span></button>
                                         </div>
-                                        <span id="flor-price" class="text-xs sm:text-base font-semibold" style="color: #e5e5e5;">$250</span>
+                                        <div id="flor-price-container">
+                                            <span id="flor-price" class="text-xs sm:text-base font-semibold" style="color: #e5e5e5;">$250</span>
                                     </div>
                                 </div>
-                                <div class="flex items-center space-x-3 text-sm mt-1">
+                                </div>
+                                <div class="flex items-center justify-between text-sm mt-1">
+                                    <div class="flex items-center space-x-3">
                                     <span class="font-semibold px-2 py-1 rounded-full" style="background-color: rgba(139, 92, 246, 0.15); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.3);">Híbrida</span>
-                                    <span style="color: #a0a0a0;">THC: 17%</span>
+                                    <span class="text-xs" style="color: #a0a0a0; margin-top: 2px;">THC: 17%</span>
+                                </div>
+                                    <span id="flor-price-original" class="price-original" style="display: none;"></span>
                                 </div>
                                 <p style="color: #888888;" class="mt-3 text-xs sm:text-base">Elevación suave</p>
                             </div>
@@ -395,7 +517,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
                                 </div>
                                 <div class="flex items-center space-x-3 text-sm mt-1">
                                     <span class="font-semibold px-2 py-1 rounded-full" style="background-color: rgba(139, 92, 246, 0.15); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.3);">Híbrida</span>
-                                    <span style="color: #a0a0a0;">THC: 17%</span>
+                                    <span class="text-xs" style="color: #a0a0a0; margin-top: 2px;">THC: 17%</span>
                                 </div>
                                 <p style="color: #888888;" class="mt-3 text-xs sm:text-base">Relajante, feliz, calma</p>
                             </div>
@@ -574,9 +696,38 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
                     '3.5g': 250,
                     '7g': 450,
                     '1/2 oz': 820,
-                    '1 oz': 1370
+                    '1 oz': 1200  // Precio con descuento (antes $1370)
                 };
-                document.getElementById('flor-price').textContent = `$${prices[quantity]}`;
+                
+                const discountBadge = document.getElementById('flor-discount-badge');
+                const priceContainer = document.getElementById('flor-price-container');
+                const priceOriginal = document.getElementById('flor-price-original');
+                
+                // Mostrar etiqueta de descuento y precios solo para "1 oz"
+                if (quantity === '1 oz') {
+                    const originalPrice = 1370;
+                    const discountedPrice = 1200;
+                    const discountPercent = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
+                    discountBadge.textContent = `${discountPercent}% OFF`;
+                    discountBadge.style.display = 'inline-flex';
+                    
+                    // Mostrar precio tachado en la línea de "Híbrida"
+                    priceOriginal.textContent = `$${originalPrice}`;
+                    priceOriginal.style.display = 'inline';
+                    
+                    // Mostrar solo nuevo precio
+                    priceContainer.innerHTML = `
+                        <span id="flor-price" class="text-xs sm:text-base font-semibold price-discounted">$${discountedPrice}</span>
+                    `;
+                } else {
+                    discountBadge.style.display = 'none';
+                    priceOriginal.style.display = 'none';
+                    
+                    // Mostrar solo precio normal
+                    priceContainer.innerHTML = `
+                        <span id="flor-price" class="text-xs sm:text-base font-semibold" style="color: #e5e5e5;">$${prices[quantity]}</span>
+                    `;
+                }
             };
             applyQuantityFlor(activeQButtonFlor.getAttribute('data-quantity'));
             const startQDragFlor = (e) => {
@@ -1026,7 +1177,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
                 // Posición final después de la inercia
                 const inertiaLeft = currentLeft + inertiaX;
                 const inertiaTop = currentTop + inertiaY;
-                
+
                 // LIMPIAR todas las transiciones antes de aplicar nueva
                 logoAnimated.style.transition = 'none';
                 
