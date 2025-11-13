@@ -9,7 +9,7 @@ OPTIMIZACIONES DE PERFORMANCE IMPLEMENTADAS:
    - Preconnect con crossorigin para fonts.gstatic.com, i.ibb.co
 
 2. RESOURCE HINTS:
-   - Preload para imágenes críticas (LCP)
+   - Preload para TODAS las imágenes críticas (logo, productos principales)
    - Preload para fuente Inter (FOUT prevention)
 
 3. CRITICAL CSS INLINE:
@@ -22,8 +22,9 @@ OPTIMIZACIONES DE PERFORMANCE IMPLEMENTADAS:
    - DOM ready detection para mostrar contenido inmediatamente
 
 5. IMAGE OPTIMIZATION:
-   - Lazy loading ya implementado en imágenes no críticas
-   - Pre-carga inteligente de imágenes críticas con requestIdleCallback
+   - fetchpriority="high" en imágenes de productos principales
+   - Lazy loading solo en imágenes secundarias (iconos de filtro)
+   - Preload explícito de imágenes críticas en <head>
 
 6. META TAGS OPTIMIZADOS:
    - Viewport-fit=cover para mejor experiencia móvil
@@ -107,6 +108,8 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
     <link rel="preload" as="image" href="https://i.ibb.co/7dZkRjh1/lanave-shop-logo-min.png">
     <link rel="preload" as="image" href="https://i.ibb.co/YBmwd2Wg/Motita-cherry.webp">
     <link rel="preload" as="image" href="https://i.ibb.co/tpYDHMb4/lanave-png.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/ch24Wqjh/ogkush.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/jPpr7YCr/1pre.png">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -462,7 +465,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
                 <div style="background-color: #141414; border: 1px solid #1a1a1a;" class="rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
                     <div class="product-content p-5">
                         <div class="flex items-start">
-                            <img src="https://i.ibb.co/ch24Wqjh/ogkush.png" loading="lazy" alt="ogkush" class="h-24 w-24 mr-5">
+                            <img src="https://i.ibb.co/ch24Wqjh/ogkush.png" alt="ogkush" class="h-24 w-24 mr-5" fetchpriority="high">
                             <div class="flex-1">
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                                     <h3 class="text-lg sm:text-xl font-bold" style="color: #e5e5e5;">Ice Cream Cake (GH)</h3>
@@ -500,7 +503,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
                 <div style="background-color: #141414; border: 1px solid #1a1a1a;" class="rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
                     <div class="product-content p-5">
                         <div class="flex items-start">
-                            <img id="preroll-image" src="https://i.ibb.co/jPpr7YCr/1pre.png" loading="lazy" alt="1pre" class="h-24 w-24 mr-5">
+                            <img id="preroll-image" src="https://i.ibb.co/jPpr7YCr/1pre.png" alt="1pre" class="h-24 w-24 mr-5" fetchpriority="high">
                             <div class="flex-1">
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                                     <h3 class="text-xl font-bold" style="color: #e5e5e5;">Granddaddy Preroll</h3>
