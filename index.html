@@ -1154,11 +1154,11 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
 
                 // Preparar el logo animado ANTES de cambiar el logo estático
                 logoAnimated.classList.add('active');
-                logoAnimated.style.position = 'fixed';
+                logoAnimated.style.position = 'absolute'; // Cambiar a absolute para que se mueva con el scroll
                 logoAnimated.style.zIndex = '1000';
                 logoAnimated.style.opacity = '0'; // Empezar invisible
-                logoAnimated.style.left = `${logoRect.left}px`;
-                logoAnimated.style.top = `${logoRect.top}px`;
+                logoAnimated.style.left = `${logo.offsetLeft}px`;
+                logoAnimated.style.top = `${logo.offsetTop}px`;
                 logoAnimated.style.margin = '0';
                 logoAnimated.style.transform = 'scale(1) rotate(0deg)';
 
@@ -1198,7 +1198,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
 
                 requestAnimationFrame(animateFadeIn);
 
-                // Después de 5 segundos, iniciar desaceleración (6s total - 1s desaceleración)
+                // Después de 2 segundos, iniciar desaceleración (3s total - 1s desaceleración)
                 initialEffectTimeoutId = setTimeout(() => {
                     initialEffectTimeoutId = null;
                     isInitialEffect = false;
@@ -1212,9 +1212,9 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
                     // Limpiar estado visual
                     logoAnimated.classList.remove('dragging');
 
-                    // Fase 1: Desaceleración y regreso a tamaño original (1.5 segundos)
+                    // Fase 1: Desaceleración y regreso a tamaño original (1 segundo)
                     const slowdownStartTime = Date.now();
-                    const slowdownDuration = 1500; // 1.5 segundos para desacelerar
+                    const slowdownDuration = 1000; // 1 segundo para desacelerar
 
                     const animateSlowdown = () => {
                         const slowdownElapsed = Date.now() - slowdownStartTime;
@@ -1299,7 +1299,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
                     };
 
                     requestAnimationFrame(animateSlowdown);
-                }, 5000); // 5 segundos de flotación activa (6s total - 1s desaceleración)
+                }, 2000); // 2 segundos de flotación activa (3s total - 1s desaceleración)
             };
 
             // Activar efecto visual inicial inmediatamente al cargar la página
