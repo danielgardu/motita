@@ -142,7 +142,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
             position: relative;
             z-index: 2;
             padding: 0.125rem 1rem;
-            font-size: 0.75rem;
+            font-size: 0.625rem;
             font-weight: 500;
             color: #888888; /* gris medio */
             background: transparent;
@@ -153,6 +153,11 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
             flex-direction: column;
             align-items: center;
             justify-content: center;
+        }
+        @media (min-width: 640px) {
+            .filter-btn {
+                font-size: 0.75rem;
+            }
         }
         .filter-btn.active {
             color: #e5e5e5; /* gris claro para alto contraste */
@@ -440,7 +445,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
     </style>
 </head>
 <body style="background-color: #0a0a0a;" class="text-gray-100">
-    <div style="background-color: #141414; width: 100%; text-align: center; padding: 8px 0; font-size: 0.875rem; font-weight: 500; color: #e5e5e5;">
+    <div style="background-color: #121212; width: 100%; text-align: center; padding: 8px 0; font-size: 0.875rem; font-weight: 500; color: #e5e5e5;">
         1era compra: 20% OFF - Pago solo por transferencia
     </div>
     <div class="container mx-auto max-w-2xl lg:max-w-6xl p-4 sm:p-6 lg:px-8 lg:py-6">
@@ -462,7 +467,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
             <!-- Producto OG Kush (Flor) -->
             <div class="product-card" data-category="flor" style="position: relative;">
                 <div class="product-discount-badge" id="flor-discount-badge" style="display: none;">12% OFF</div>
-                <div style="background-color: #141414; border: 1px solid #1a1a1a;" class="rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
+                <div style="background-color: #121212; border: 1px solid #151515;" class="rounded-[28px] shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
                     <div class="product-content p-5">
                         <div class="flex items-start">
                             <img src="https://i.ibb.co/ch24Wqjh/ogkush.png" alt="ogkush" class="h-24 w-24 mr-5" fetchpriority="high">
@@ -500,7 +505,7 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
             </div>
             <!-- Producto Granddaddy Preroll (Joint) -->
             <div class="product-card" data-category="joint">
-                <div style="background-color: #141414; border: 1px solid #1a1a1a;" class="rounded-2xl shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
+                <div style="background-color: #121212; border: 1px solid #151515;" class="rounded-[28px] shadow-md overflow-hidden relative transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
                     <div class="product-content p-5">
                         <div class="flex items-start">
                             <img id="preroll-image" src="https://i.ibb.co/jPpr7YCr/1pre.png" alt="1pre" class="h-24 w-24 mr-5" fetchpriority="high">
@@ -1308,11 +1313,11 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
 
                 // Preparar el logo animado ANTES de cambiar el logo estático
                 logoAnimated.classList.add('active');
-                logoAnimated.style.position = 'absolute'; // Cambiar a absolute para que se mueva con el scroll
+                logoAnimated.style.position = 'fixed'; // Usar fixed para posición exacta desde el inicio
                 logoAnimated.style.zIndex = '1000';
                 logoAnimated.style.opacity = '0'; // Empezar invisible
-                logoAnimated.style.left = `${logo.offsetLeft}px`;
-                logoAnimated.style.top = `${logo.offsetTop}px`;
+                logoAnimated.style.left = `${logoRect.left}px`;
+                logoAnimated.style.top = `${logoRect.top}px`;
                 logoAnimated.style.margin = '0';
                 logoAnimated.style.transform = 'scale(1) rotate(0deg)';
 
@@ -1458,6 +1463,26 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
 
             // Activar efecto visual inicial inmediatamente al cargar la página
             playInitialLogoEffect();
+
+            // Event listener para resize - actualizar posición del logo animado
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                // Si el logo está en efecto inicial o siendo arrastrado, actualizar su posición
+                if (isInitialEffect || isDraggingLogo) {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(() => {
+                        // Obtener nueva posición del logo estático
+                        const logoRect = logo.getBoundingClientRect();
+                        
+                        // Si está en posición fixed (durante drag o efecto inicial)
+                        if (logoAnimated.style.position === 'fixed') {
+                            // Actualizar la posición para que siga al logo estático
+                            logoAnimated.style.left = `${logoRect.left}px`;
+                            logoAnimated.style.top = `${logoRect.top}px`;
+                        }
+                    }, 10); // Pequeño debounce para evitar demasiadas actualizaciones
+                }
+            });
         });
     </script>
 
