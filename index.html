@@ -267,6 +267,9 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
             #productos-text {
                 font-size: 4rem !important;
             }
+            #filters-container {
+                margin-top: -1.25rem !important;
+            }
         }
         /* Ajustes para desktop - menú más pequeño */
         @media (min-width: 1024px) {
@@ -438,17 +441,17 @@ RESULTADO: Carga inicial ~40-60% más rápida en dispositivos nuevos
 </head>
 <body style="background-color: #0a0a0a;" class="text-gray-100">
     <div style="background-color: #121212; width: 100%; text-align: center; padding: 8px 0; font-size: 0.875rem; font-weight: 500; color: #e5e5e5;">
-        1era compra: 20% OFF - Pago solo por transferencia
+        Envios GRATIS 24 hrs • Pago solo × transferencia
     </div>
     <div class="container mx-auto max-w-2xl lg:max-w-6xl p-4 sm:p-6 lg:px-8 lg:py-6">
         <header class="flex items-center justify-center mb-4 relative" style="min-height: 8.5rem; position: relative;">
-            <span id="productos-text" class="font-bold" style="font-family: 'Do Hyeon', sans-serif; color: #e5e5e5; position: absolute; left: 50%; transform: translateX(-50%) translateY(-0.5rem); z-index: 0; white-space: nowrap; pointer-events: none; font-size: 4.5rem; line-height: 1;">PRODUCTOS</span>
-            <div class="relative" style="position: relative; z-index: 1; flex-shrink: 0; margin-left: -3rem; margin-top: -0.5rem;">
+            <span id="productos-text" class="font-bold" style="font-family: 'Do Hyeon', sans-serif; color: #e5e5e5; position: absolute; left: 50%; transform: translateX(-50%) translateY(-0.75rem); z-index: 0; white-space: nowrap; pointer-events: none; font-size: 4.5rem; line-height: 1;">PRODUCTOS</span>
+            <div class="relative" style="position: relative; z-index: 1; flex-shrink: 0; margin-left: -3rem; margin-top: -0.75rem;">
                 <img id="logo" src="https://i.ibb.co/YBmwd2Wg/Motita-cherry.webp" alt="lanave-shop-logo-min" style="height: 8.5rem; width: auto; min-width: 8.5rem; position: relative; z-index: 2; display: block;" draggable="false">
                 <img id="logo-animated" src="https://i.ibb.co/YBmwd2Wg/Motita-cherry.webp" alt="Motita-cherry" style="height: 8.5rem; width: auto; min-width: 8.5rem; position: absolute; top: 0; left: 0; z-index: 2;" draggable="false">
             </div>
         </header>
-        <div class="flex justify-center mb-6 lg:mb-8 z-20" style="margin-top: -0.5rem;">
+        <div id="filters-container" class="flex justify-center mb-6 lg:mb-8 z-20" style="margin-top: -0.75rem;">
             <div id="filters" class="py-0 px-1">
                 <div id="filter-pill">
                     <canvas id="filter-pill-canvas" class="pill-canvas"></canvas>
